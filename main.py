@@ -16,27 +16,29 @@ app = FastAPI(
 )
 
 # =====================================================================
-# CORS MIDDLEWARE - PRODUCTION READY
+# CORS MIDDLEWARE - MUST BE FIRST!
 # =====================================================================
 
-print("🔧 CORS Configuration:")
-print(f"   Allowed Origins: {settings.CORS_ORIGINS}")
+# Define origins explicitly
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+    "https://harmony-app-frontend.onrender.com",
+]
 
+print("🔧 CORS Configuration:")
+print(f"   Allowed Origins: {origins}")
+
+# Add CORS middleware with explicit configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=origins,  # Use explicit list
     allow_credentials=True,
-    allow_methods=[
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE",
-        "OPTIONS",
-        "PATCH",
-    ],  # ✅ Explicitly include OPTIONS
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
-    expose_headers=["*"],  # ✅ Add this
-    max_age=3600,  # ✅ Cache preflight for 1 hour
+    expose_headers=["*"],
 )
 
 print("✅ CORS Middleware configured")
@@ -46,6 +48,17 @@ print("✅ CORS Middleware configured")
 # =====================================================================
 
 Base.metadata.create_all(bind=engine)
+
+# =====================================================================
+# HEALTH CHECK (before routers)
+# =====================================================================
+
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "cors": "enabled"}
+
 
 # =====================================================================
 # ROUTES
@@ -70,6 +83,7 @@ def root():
         "message": "Welcome to Harmony API",
         "version": "1.0.0",
         "cors_enabled": True,
+        "allowed_origins": origins,
         "docs": "/docs",
         "endpoints": {
             "auth": "/auth",

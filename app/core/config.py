@@ -2,6 +2,7 @@ from typing import Generator, List
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
 from pydantic_settings import BaseSettings
+import os
 
 
 # =====================================================================
@@ -14,8 +15,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "Harmony API"
     DEBUG: bool = True
 
-    # ✅ Database (updated path — use persistent folder for Render)
-    DATABASE_URL: str = "sqlite:///./data/test.db"
+    # Database (updated path — use persistent folder for Render)
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
     # JWT
     SECRET_KEY: str = "Supersecretkey"
@@ -24,13 +25,13 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # ✅ CORS - added Render frontend URL (replace with your actual URL)
+    # CORS - Simple list without reading from settings
     CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:3000",
-        "https://harmony-app-frontend.onrender.com",  # ✅ No trailing slash
+        "https://harmony-app-frontend.onrender.com",
     ]
 
     class Config:
@@ -45,7 +46,6 @@ settings = Settings()
 # DATABASE
 # =====================================================================
 
-# ✅ No other change except the DATABASE_URL above
 engine = create_engine(
     settings.DATABASE_URL,
     connect_args=(
