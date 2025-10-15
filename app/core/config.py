@@ -8,6 +8,7 @@ from pydantic_settings import BaseSettings
 # SETTINGS
 # =====================================================================
 
+
 class Settings(BaseSettings):
     # App
     APP_NAME: str = "Harmony API"
@@ -29,7 +30,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:3000",
-        "https://your-frontend-name.onrender.com"  # 👈 update this after frontend deploy
+        "https://harmony-app-frontend.onrender.com",  # 👈 add your deployed frontend
     ]
 
     class Config:
@@ -47,7 +48,9 @@ settings = Settings()
 # ✅ No other change except the DATABASE_URL above
 engine = create_engine(
     settings.DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
+    connect_args=(
+        {"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
+    ),
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
