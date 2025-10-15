@@ -1,0 +1,16 @@
+# Python / FastAPI
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+harmony.db
+
+# Virtual environment
+.venv/
+
+# Environment files
+.env
+
+# VSCode / IDE
+.vscode/
