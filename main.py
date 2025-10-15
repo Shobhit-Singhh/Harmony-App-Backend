@@ -1,4 +1,3 @@
-# app/main.py - DEBUG VERSION
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -17,15 +16,17 @@ app = FastAPI(
 )
 
 # =====================================================================
-# CORS MIDDLEWARE - WIDE OPEN FOR DEBUGGING
+# CORS MIDDLEWARE - PRODUCTION READY
 # =====================================================================
 
+# ✅ Use your settings.CORS_ORIGINS instead of "*"
+# (You already added Render frontend URL in config.py earlier)
 print("🔧 CORS Configuration:")
 print(f"   Allowed Origins: {settings.CORS_ORIGINS}")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TEMPORARY - Allow all for debugging
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,6 +38,7 @@ print("✅ CORS Middleware configured")
 # DATABASE INITIALIZATION
 # =====================================================================
 
+# ✅ This ensures DB tables are created at startup
 Base.metadata.create_all(bind=engine)
 
 # =====================================================================
@@ -69,17 +71,3 @@ def root():
             "daily_logs": "/daily_logs"
         }
     }
-
-# =====================================================================
-# STARTUP EVENT
-# =====================================================================
-
-@app.on_event("startup")
-async def startup_event():
-    print("\n" + "="*50)
-    print("🚀 Harmony API Started Successfully!")
-    print("="*50)
-    print(f"📍 Server: http://localhost:8000")
-    print(f"📚 Docs: http://localhost:8000/docs")
-    print(f"🔐 Auth Endpoints: http://localhost:8000/auth")
-    print("="*50 + "\n")
