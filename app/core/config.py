@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # Database (updated path — use persistent folder for Render)
-    DATABASE_URL = os.getenv("DATABASE_URL")
+    DATABASE_URL: str = os.getenv("DATABASE_URL")
 
     # JWT
     SECRET_KEY: str = "Supersecretkey"
